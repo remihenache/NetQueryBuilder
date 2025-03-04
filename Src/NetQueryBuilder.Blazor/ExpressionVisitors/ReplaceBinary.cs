@@ -20,10 +20,7 @@ public class ReplaceBinary : ExpressionVisitor, IExpressionVisitor<BinaryExpress
 
     protected override Expression VisitBinary(BinaryExpression node)
     {
-        if (node == _original)
-        {
-            return _replacement;
-        }
+        if (node == _original) return _replacement;
 
         return base.VisitBinary(node);
     }

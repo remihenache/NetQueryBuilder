@@ -2,7 +2,6 @@
 @using NetQueryBuilder.Blazor.ExpressionVisitors.Extensions
 @using NetQueryBuilder.Extensions
 @using NetQueryBuilder.Operators
-
 <MudExpansionPanels>
     <MudExpansionPanel Expanded="true">
         <TitleContent>
@@ -54,17 +53,13 @@
 </MudExpansionPanels>
 
 @code {
-    [Parameter]
-    public Action<Expression> OnChange { get; set; }
+    [Parameter] public Action<Expression> OnChange { get; set; }
 
-    [Parameter]
-    public Action OnRemove { get; set; }
+    [Parameter] public Action OnRemove { get; set; }
 
-    [Parameter]
-    public ParameterExpression ParameterExpression { get; set; }
+    [Parameter] public ParameterExpression ParameterExpression { get; set; }
 
-    [Parameter]
-    public Expression PredicateExpression { get; set; }
+    [Parameter] public Expression PredicateExpression { get; set; }
 
     private RelationalOperators _relationalOperators;
     private List<string> _navigationPath = new();
@@ -127,4 +122,5 @@
     {
         OnRemove();
     }
+
 }

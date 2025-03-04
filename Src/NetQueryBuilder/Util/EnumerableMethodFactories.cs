@@ -30,8 +30,7 @@ public class EnumerableMethodInfo
     {
         var method = typeof(Enumerable)
             .GetMethods(BindingFlags.Static | BindingFlags.Public)
-            .Where(m => m.Name == "Contains" && m.GetParameters().Length == 2)
-            .FirstOrDefault();
+            .First(m => m.Name == "Contains" && m.GetParameters().Length == 2);
 
         var methodGeneric = method.MakeGenericMethod(typeof(TSource));
 

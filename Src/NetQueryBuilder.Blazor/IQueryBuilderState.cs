@@ -14,18 +14,16 @@ public class New : IQueryBuilderState
     }
 }
 
-
-public class Loaded: IQueryBuilderState
+public class Loaded : IQueryBuilderState
 {
     public IQueryBuilderState DisplayBuilder(Action onDisplay)
     {
         onDisplay();
         return this;
     }
-
 }
 
-public class None: IQueryBuilderState
+public class None : IQueryBuilderState
 {
     public IQueryBuilderState DisplayBuilder(Action onDisplay)
     {

@@ -1,13 +1,12 @@
 ﻿using System.Linq.Expressions;
-using System.Reflection;
 
 namespace NetQueryBuilder.Blazor.ExpressionVisitors;
 
 public class ChangePropertyAccess : ExpressionVisitor, IExpressionVisitor<MemberExpression>
 {
     private readonly Expression _expression;
-    private readonly Type _propertyType;
     private readonly string _propertyName;
+    private readonly Type _propertyType;
 
     internal ChangePropertyAccess(Expression expression, Type propertyType, string propertyName)
     {
@@ -25,10 +24,11 @@ public class ChangePropertyAccess : ExpressionVisitor, IExpressionVisitor<Member
     {
         if (node == _expression)
         {
-            Expression expression = Visit(node.Expression);
-            PropertyInfo prop = _propertyType.GetProperty(_propertyName);
+            var expression = Visit(node.Expression);
+            var prop = _propertyType.GetProperty(_propertyName);
             return Expression.MakeMemberAccess(expression, prop);
         }
+
         return base.VisitMember(node);
     }
 }

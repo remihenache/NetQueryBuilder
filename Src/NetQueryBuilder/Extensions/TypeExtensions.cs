@@ -29,7 +29,7 @@ public static class TypeExtensions
             return false;
 
         // Go through the arguments passed in, interpret nulls as "any type"
-        for (int i = 0; i != args.Length; i++)
+        for (var i = 0; i != args.Length; i++)
         {
             if (args[i] == null)
                 continue;
@@ -43,8 +43,8 @@ public static class TypeExtensions
     public static MethodInfo GetGenericMethod(
         this Type type,
         string methodName,
-        Type genericTypeDefinition,
-        params Type[] genericTypeArgs)
+        Type? genericTypeDefinition,
+        params Type[]? genericTypeArgs)
     {
         return type
             .GetMethods()

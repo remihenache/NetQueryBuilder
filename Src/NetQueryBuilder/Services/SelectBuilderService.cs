@@ -18,19 +18,19 @@ public class SelectBuilderService<TEntity>
          *   "Address.Country.Name" -> groupe "Address" avec sous-propriété "Country.Name".
          */
         var groupedPaths = propertyPaths
-            .Select(path => new {_original = path, parts = path.Split('.')})
-            .GroupBy(x => x.parts[0]);  // clé = premier segment (p. ex. "Address" ou "FirstName")
+            .Select(path => new { _original = path, parts = path.Split('.') })
+            .GroupBy(x => x.parts[0]); // clé = premier segment (p. ex. "Address" ou "FirstName")
 
         foreach (var group in groupedPaths)
         {
             // Nom de la propriété de premier niveau
             var topPropName = group.Key;
             var topPropertyInfo = typeof(TEntity).GetProperty(topPropName);
-            if (topPropertyInfo == null) 
+            if (topPropertyInfo == null)
                 continue; // la propriété n’existe pas dans TEntity
 
             // Identifier si c’est un type simple (int, string, etc.) ou un type complexe
-            bool isSimple = IsSimpleType(topPropertyInfo.PropertyType);
+            var isSimple = IsSimpleType(topPropertyInfo.PropertyType);
 
             // Si c’est un type simple ou qu’il n’y a pas de sous-propriétés, on crée un binding direct
             if (isSimple || group.All(x => x.parts.Length == 1))
@@ -64,8 +64,8 @@ public class SelectBuilderService<TEntity>
     }
 
     /// <summary>
-    /// Construit une initialisation d’objet pour un type “subType”,
-    /// en décidant quelles propriétés (ou sous-propriétés) on associe.
+    ///     Construit une initialisation d’objet pour un type “subType”,
+    ///     en décidant quelles propriétés (ou sous-propriétés) on associe.
     /// </summary>
     private Expression BuildSubSelect(Type subType, Expression subInstance, IEnumerable<string> propertyPaths)
     {
@@ -74,17 +74,17 @@ public class SelectBuilderService<TEntity>
 
         // On regroupe de la même manière que pour BuildSelect (compile les chemins par premier segment)
         var groupedPaths = propertyPaths
-            .Select(path => new {original = path, parts = path.Split('.')})
+            .Select(path => new { original = path, parts = path.Split('.') })
             .GroupBy(x => x.parts[0]);
 
         foreach (var group in groupedPaths)
         {
             var propName = group.Key;
             var propInfo = subType.GetProperty(propName);
-            if (propInfo == null) 
+            if (propInfo == null)
                 continue;
 
-            bool isSimple = IsSimpleType(propInfo.PropertyType);
+            var isSimple = IsSimpleType(propInfo.PropertyType);
 
             if (isSimple || group.All(x => x.parts.Length == 1))
             {
@@ -124,5 +124,4 @@ public class SelectBuilderService<TEntity>
                || type == typeof(TimeSpan)
                || type == typeof(Guid);
     }
-
 }

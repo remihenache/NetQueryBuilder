@@ -23,20 +23,17 @@
 
 @code {
 
-    Dictionary<string, string> Operators = new Dictionary<string, string>
+    Dictionary<string, string> Operators = new()
     {
-        {"AndAlso", "And"},
-        {"OrElse", "Or"},
+        { "AndAlso", "And" },
+        { "OrElse", "Or" }
     };
 
-    [Parameter]
-    public Action<Expression> OnChange { get; set; }
+    [Parameter] public Action<Expression> OnChange { get; set; }
 
-    [Parameter]
-    public BinaryExpression PredicateExpression { get; set; }
+    [Parameter] public BinaryExpression PredicateExpression { get; set; }
 
-    [Parameter]
-    public ParameterExpression ParameterExpression { get; set; }
+    [Parameter] public ParameterExpression ParameterExpression { get; set; }
 
     protected override void OnInitialized()
     {
@@ -71,4 +68,5 @@
     {
         OnChange(PredicateExpression.Left.Copy());
     }
+
 }

@@ -9,7 +9,7 @@ public static class PropertyInspector
     public static IEnumerable<string> GetAllPropertyPaths(
         Type type,
         string parentPath = "",
-        HashSet<Type> visitedTypes = null)
+        HashSet<Type>? visitedTypes = null)
     {
         // Initialisation du HashSet si nécéssaire
         visitedTypes ??= new HashSet<Type>();
@@ -23,23 +23,17 @@ public static class PropertyInspector
 
         foreach (var prop in type.GetProperties(BindingFlags.Public | BindingFlags.Instance))
         {
-            var propertyPath = string.IsNullOrEmpty(parentPath) 
-                ? prop.Name 
+            var propertyPath = string.IsNullOrEmpty(parentPath)
+                ? prop.Name
                 : $"{parentPath}.{prop.Name}";
 
             // Vérifier s'il s'agit d'un type simple
             if (IsSimpleType(prop.PropertyType))
-            {
                 yield return propertyPath;
-            }
-            else if(!prop.PropertyType.IsAssignableTo(typeof(IEnumerable)))
-            {
+            else if (!prop.PropertyType.IsAssignableTo(typeof(IEnumerable)))
                 // Récupérer les sous-propriétés sans redéclencher une boucle
                 foreach (var childPath in GetAllPropertyPaths(prop.PropertyType, propertyPath, new HashSet<Type>(visitedTypes)))
-                {
                     yield return childPath;
-                }
-            }
         }
 
         // Une fois ce type traité, on peut le retirer si l’on veut poursuivre d’autres chemins indépendants
@@ -51,8 +45,8 @@ public static class PropertyInspector
     // Déterminer si c’est un type “simple” (valeur, string, DateTime, etc.)
     private static bool IsSimpleType(Type type)
     {
-        return type.IsPrimitive 
-               || type.IsEnum 
+        return type.IsPrimitive
+               || type.IsEnum
                || type == typeof(string)
                || type == typeof(decimal)
                || type == typeof(int)

@@ -1,6 +1,6 @@
-﻿@using System.Linq.Expressions
+﻿@using System.Collections
+@using System.Linq.Expressions
 @using System.Reflection
-@using System.Collections
 @using NetQueryBuilder.Blazor.ExpressionVisitors.Extensions
 @using NetQueryBuilder.Extensions
 @using NetQueryBuilder.Services
@@ -12,14 +12,6 @@
 <MudStack Spacing="10">
     <div>
         <MudText Typo="Typo.h5">SELECT</MudText>
-        @* <MudSelect Label="Fields" T="PropertyInfo" @bind-SelectedValues="SelectedProperties" MultiSelection="true" SelectAll="true" ToStringFunc="@(prop => prop.Name)"> *@
-        @*     @foreach (var property in _properties) *@
-        @*     { *@
-        @*         <MudSelectItem T="PropertyInfo" Value="property"> *@
-        @*             @property.Name *@
-        @*         </MudSelectItem> *@
-        @*     } *@
-        @* </MudSelect> *@
         <MudSelect Label="Fields" T="string" @bind-SelectedValues="SelectedPropertyPaths" MultiSelection="true" SelectAll="true" ToStringFunc="@(prop => prop)">
             @foreach (var property in propertyPaths)
             {
@@ -33,8 +25,8 @@
     <div>
         <MudText Typo="Typo.h5" GutterBottom="true">WHERE</MudText>
         <LambdaComponent OnChanged="@OnChanged"
-        Lambda="@QueryBuilderService.Lambda"
-        Parameter="@QueryBuilderService.Parameter">
+                         Lambda="@QueryBuilderService.Lambda"
+                         Parameter="@QueryBuilderService.Parameter">
         </LambdaComponent>
     </div>
 
@@ -60,20 +52,17 @@
 
 @code {
 
-    [Parameter]
-    public string Expression { get; set; }
+    [Parameter] public string Expression { get; set; }
 
-    private List<TEntity> _data = new List<TEntity>();
+    private List<TEntity> _data = new();
     private Expression<Func<TEntity, bool>> Predicate => (Expression<Func<TEntity, bool>>)QueryBuilderService.Lambda;
-    private IEnumerable<PropertyInfo> _properties = Enumerable.Empty<PropertyInfo>();
-    private IEnumerable<PropertyInfo> SelectedProperties = new List<PropertyInfo>();
     private IEnumerable<string> propertyPaths = Enumerable.Empty<string>();
     private IEnumerable<string> SelectedPropertyPaths = new List<string>();
+
     protected override Task OnInitializedAsync()
     {
         propertyPaths = PropertyInspector.GetAllPropertyPaths(typeof(TEntity)).ToList();
         SelectedPropertyPaths = propertyPaths.ToList();
-        //SelectedProperties = _properties.ToList();
         return base.OnInitializedAsync();
     }
 
@@ -115,9 +104,10 @@
     {
         IQueryService<TEntity> queryService = QueryServiceFactory.Create<TEntity>();
 
-        IEnumerable data = await queryService.QueryData(Predicate, predicate.SelectedProperties);
+        var data = await queryService.QueryData(Predicate, predicate.SelectedProperties);
         return data;
     }
+
     private object GetNestedPropertyValue(object entity, string propertyPath)
     {
         var segments = propertyPath.Split('.');

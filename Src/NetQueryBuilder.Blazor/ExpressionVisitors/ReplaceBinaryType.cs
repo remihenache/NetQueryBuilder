@@ -20,12 +20,8 @@ public class ReplaceBinaryType : ExpressionVisitor, IExpressionVisitor<BinaryExp
 
     protected override Expression VisitBinary(BinaryExpression node)
     {
-        if (node == _expression)
-        {
-            return Expression.MakeBinary(_newExpressionType, Visit(node.Left), Visit(node.Right));
-        }
+        if (node == _expression) return Expression.MakeBinary(_newExpressionType, Visit(node.Left), Visit(node.Right));
 
         return base.VisitBinary(node);
     }
-
 }

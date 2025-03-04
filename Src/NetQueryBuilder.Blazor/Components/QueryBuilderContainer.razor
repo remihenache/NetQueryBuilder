@@ -27,7 +27,7 @@
     </DialogActions>
 </MudDialog>
 
-<MudStack Spacing="5"> 
+<MudStack Spacing="5">
     <MudStack Spacing="10">
         <MudStack Spacing="2">
             <MudItem xs="12">
@@ -52,25 +52,31 @@
     private int _queryBuilderKey = 0; // Unique key to force re-render
     private string _selectedQuery;
     private IReadOnlyList<Type> _entities = Array.Empty<Type>();
-    private IEnumerable<string> _queries = new[] 
-    { 
-        "person => ((person.PersonId == \"1\") OrElse (person.PersonId == \"2\"))", 
+
+    private IEnumerable<string> _queries = new[]
+    {
+        "person => ((person.PersonId == \"1\") OrElse (person.PersonId == \"2\"))",
         "person => person.LastName == \"Jones\"",
         "person => EF.Functions.Like(person.FirstName, \"%Alice%\")"
     };
-    private DialogOptions _loadQueryDialogOptions = new DialogOptions { CloseButton = true };
+
+    private DialogOptions _loadQueryDialogOptions = new() { CloseButton = true };
     private bool _showLoadQueryDialog = false;
 
-    RenderFragment CreateQueryBuilder() => builder =>
+    RenderFragment CreateQueryBuilder()
     {
-        builder.OpenComponent(0, typeof(QueryBuilder<>).MakeGenericType(SelectedEntityType));
-        builder.AddAttribute(1, "Expression", Expression);
-        builder.CloseComponent();
-    };
+        return builder =>
+        {
+            builder.OpenComponent(0, typeof(QueryBuilder<>).MakeGenericType(SelectedEntityType));
+            builder.AddAttribute(1, "Expression", Expression);
+            builder.CloseComponent();
+        };
+    }
 
     private string Expression { get; set; } = string.Empty;
 
     private IQueryBuilderState _state = new None();
+
     protected override async Task OnInitializedAsync()
     {
         _entities = (await QueryServiceFactory.GetEntities()).ToList();
@@ -113,4 +119,5 @@
         Expression = string.Empty;
         _queryBuilderKey++;
     }
+
 }

@@ -5,13 +5,13 @@ namespace NetQueryBuilder.BlazorSampleApp;
 
 public class MyDbContext : DbContext
 {
-    public DbSet<Person> Persons { get; set; }
-    public DbSet<Address> Addresses { get; set; }
-    public DbSet<Utility> Utility { get; set; }
-
     public MyDbContext(DbContextOptions<MyDbContext> options) : base(options)
     {
     }
+
+    public DbSet<Person> Persons { get; set; }
+    public DbSet<Address> Addresses { get; set; }
+    public DbSet<Utility> Utility { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -32,14 +32,14 @@ public static class MyDbContextExtensions
         {
             var persons = new List<Person>
             {
-                new Person
+                new()
                 {
                     FirstName = "Alice",
                     LastName = "Jones",
                     PersonId = "1",
                     Created = DateTime.Now
                 },
-                new Person
+                new()
                 {
                     FirstName = "Bob",
                     LastName = "Smith",
@@ -53,15 +53,15 @@ public static class MyDbContextExtensions
 
             var addresses = new List<Address>
             {
-                new Address
+                new()
                 {
                     AddressId = 1,
                     PersonId = "1",
                     IsPrimary = true,
                     City = "Paris",
-                    Utilities = new List<Utility>()
+                    Utilities = new List<Utility>
                     {
-                        new Utility
+                        new()
                         {
                             UtilityId = 1,
                             AccountNumber = "123456",
@@ -71,15 +71,15 @@ public static class MyDbContextExtensions
                         }
                     }
                 },
-                new Address
+                new()
                 {
                     AddressId = 2,
                     PersonId = "2",
                     IsPrimary = false,
                     City = "New York",
-                    Utilities = new List<Utility>()
+                    Utilities = new List<Utility>
                     {
-                        new Utility
+                        new()
                         {
                             UtilityId = 2,
                             AccountNumber = "654321",

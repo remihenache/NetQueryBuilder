@@ -1,30 +1,25 @@
-﻿@using System.Reflection
-@using System.Linq.Expressions
+﻿@using System.Linq.Expressions
+@using System.Reflection
 @using NetQueryBuilder.Blazor.ExpressionVisitors.Extensions
 @using NetQueryBuilder.Extensions
 @using NetQueryBuilder.Operators
-
 <MudSelect Label="Field" T="string" ValueChanged="OnFieldSelected" Value="_selectedPropertyName">
-    @foreach (PropertyInfo property in _selectedPropertyType.GetProperties())
+    @foreach (var property in _selectedPropertyType.GetProperties())
     {
-        <MudSelectItem Value="@property.Name" style="@(@property.PropertyType.IsClass ? "font-weight: bold" : "")">
-            @property.Name.ToString()
+        <MudSelectItem Value="@property.Name" style="@(property.PropertyType.IsClass ? "font-weight: bold" : "")">
+            @property.Name
         </MudSelectItem>
     }
 </MudSelect>
 
 @code {
-    [Parameter]
-    public ParameterExpression ParameterExpression { get; set; }
+    [Parameter] public ParameterExpression ParameterExpression { get; set; }
 
-    [Parameter]
-    public Expression PredicateExpression { get; set; }
+    [Parameter] public Expression PredicateExpression { get; set; }
 
-    [Parameter]
-    public Action<string> OnNavigatePathChanged { get; set; }
+    [Parameter] public Action<string> OnNavigatePathChanged { get; set; }
 
-    [Parameter]
-    public Action<Expression> OnFieldChanged { get; set; }
+    [Parameter] public Action<Expression> OnFieldChanged { get; set; }
 
     private Type _selectedPropertyType;
     private string _selectedPropertyName;
@@ -86,7 +81,7 @@
             .First();
 
         var newExpression = Expression.MakeBinary(newOperator.ExpressionType, memberExpression, defaultValueExpression);
-            
+
         PredicateExpression = newExpression;
         OnFieldChanged?.Invoke(newExpression);
     }
@@ -119,4 +114,5 @@
             _ => throw new Exception("Unsupported property type")
         };
     }
+
 }
