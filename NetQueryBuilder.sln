@@ -1,0 +1,60 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.12.35527.113
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetQueryBuilder.BlazorSampleApp", "Samples\NetQueryBuilder.BlazorSampleApp\NetQueryBuilder.BlazorSampleApp.csproj", "{B97627D7-4107-4054-B2B1-0E869B5541EF}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".Solution Items", ".Solution Items", "{02734CD4-1208-4E69-AC53-F9AE2107A822}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetQueryBuilder", "Src\NetQueryBuilder\NetQueryBuilder.csproj", "{6B710EF8-EE72-4A24-AD0F-CAF43B173896}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetQueryBuilder.EntityFramework", "Src\NetQueryBuilder.EntityFramework\NetQueryBuilder.EntityFramework.csproj", "{916B6815-8FCB-4158-B892-8F8621E00EAD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetQueryBuilder.Blazor", "Src\NetQueryBuilder.Blazor\NetQueryBuilder.Blazor.csproj", "{EB956806-7EE6-46CB-8CE3-2B07BF31921D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{637AC837-4843-4D8E-AE42-759E2D2DE4C5}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{F513E84C-518B-4052-A529-81846E9E9689}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{A2741D5A-C8E5-4AF3-A544-6ED362460E7A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B97627D7-4107-4054-B2B1-0E869B5541EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B97627D7-4107-4054-B2B1-0E869B5541EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B97627D7-4107-4054-B2B1-0E869B5541EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B97627D7-4107-4054-B2B1-0E869B5541EF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6B710EF8-EE72-4A24-AD0F-CAF43B173896}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6B710EF8-EE72-4A24-AD0F-CAF43B173896}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6B710EF8-EE72-4A24-AD0F-CAF43B173896}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6B710EF8-EE72-4A24-AD0F-CAF43B173896}.Release|Any CPU.Build.0 = Release|Any CPU
+		{916B6815-8FCB-4158-B892-8F8621E00EAD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{916B6815-8FCB-4158-B892-8F8621E00EAD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{916B6815-8FCB-4158-B892-8F8621E00EAD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{916B6815-8FCB-4158-B892-8F8621E00EAD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EB956806-7EE6-46CB-8CE3-2B07BF31921D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EB956806-7EE6-46CB-8CE3-2B07BF31921D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EB956806-7EE6-46CB-8CE3-2B07BF31921D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EB956806-7EE6-46CB-8CE3-2B07BF31921D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {9F141EE6-0729-4552-9DA6-8CCF9F0D09C1}
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{916B6815-8FCB-4158-B892-8F8621E00EAD} = {637AC837-4843-4D8E-AE42-759E2D2DE4C5}
+		{EB956806-7EE6-46CB-8CE3-2B07BF31921D} = {637AC837-4843-4D8E-AE42-759E2D2DE4C5}
+		{6B710EF8-EE72-4A24-AD0F-CAF43B173896} = {637AC837-4843-4D8E-AE42-759E2D2DE4C5}
+		{B97627D7-4107-4054-B2B1-0E869B5541EF} = {F513E84C-518B-4052-A529-81846E9E9689}
+	EndGlobalSection
+EndGlobal

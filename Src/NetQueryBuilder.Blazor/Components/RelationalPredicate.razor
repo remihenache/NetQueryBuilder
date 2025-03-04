@@ -1,0 +1,130 @@
+﻿@using System.Linq.Expressions
+@using NetQueryBuilder.Blazor.ExpressionVisitors.Extensions
+@using NetQueryBuilder.Extensions
+@using NetQueryBuilder.Operators
+
+<MudExpansionPanels>
+    <MudExpansionPanel Expanded="true">
+        <TitleContent>
+            <MudStack Row AlignItems="AlignItems.Center">
+                <MudChipSet T="string" Color="Color.Tertiary" Variant="Variant.Text" Label="true" AllClosable>
+                    @foreach (var path in _navigationPath)
+                    {
+                        <MudChip Text="@path"></MudChip>
+                    }
+                </MudChipSet>
+                <MudText Typo="Typo.caption">@PredicateExpression.ToString()</MudText>
+            </MudStack>
+        </TitleContent>
+        <ChildContent>
+            <MudStack Spacing="2">
+                <MudGrid>
+                    <MudItem xs="12" sm="4">
+                        <RelationalPredicateField ParameterExpression="ParameterExpression"
+                                                  PredicateExpression="PredicateExpression"
+                                                  OnNavigatePathChanged="AddToNavigatePath"
+                                                  OnFieldChanged="OnFieldChanged">
+                        </RelationalPredicateField>
+                    </MudItem>
+                    <MudItem xs="12" sm="4">
+                        <RelationalOperators @ref="_relationalOperators"
+                                             PredicateExpression="PredicateExpression"
+                                             OnOperatedUpdated="@OnOperatedUpdated">
+                        </RelationalOperators>
+                    </MudItem>
+                    <MudItem xs="12" sm="4">
+                        <RelationalValue ParameterExpression="ParameterExpression"
+                                         PredicateExpression="PredicateExpression"
+                                         OnValueChanged="OnValueChanged">
+                        </RelationalValue>
+                    </MudItem>
+                    <MudItem xs="12" sm="4">
+                        <div>
+                            <MudStack Row Spacing="2">
+                                <MudButton Variant="Variant.Filled" OnClick="@(() => AddPredicate(ExpressionType.AndAlso))">And</MudButton>
+                                <MudButton Variant="Variant.Filled" OnClick="@(() => AddPredicate(ExpressionType.OrElse))">Or</MudButton>
+                                <MudIconButton Variant="Variant.Filled" Icon="@Icons.Material.Filled.Delete" OnClick="RemovePredicate"></MudIconButton>
+                            </MudStack>
+                        </div>
+                    </MudItem>
+                </MudGrid>
+            </MudStack>
+        </ChildContent>
+    </MudExpansionPanel>
+</MudExpansionPanels>
+
+@code {
+    [Parameter]
+    public Action<Expression> OnChange { get; set; }
+
+    [Parameter]
+    public Action OnRemove { get; set; }
+
+    [Parameter]
+    public ParameterExpression ParameterExpression { get; set; }
+
+    [Parameter]
+    public Expression PredicateExpression { get; set; }
+
+    private RelationalOperators _relationalOperators;
+    private List<string> _navigationPath = new();
+
+    protected override void OnInitialized()
+    {
+        _navigationPath.Add(ParameterExpression.Type.Name);
+
+        base.OnInitialized();
+    }
+
+    private void OnFieldChanged(Expression expression)
+    {
+        UpdateExpression(expression);
+    }
+
+    private void AddToNavigatePath(string propertyName)
+    {
+        _navigationPath.Add(propertyName);
+        StateHasChanged();
+    }
+
+    private void OnOperatedUpdated(Expression expression)
+    {
+        UpdateExpression(expression);
+    }
+
+    private void OnValueChanged(Expression expression)
+    {
+        UpdateExpression(expression);
+    }
+
+    private void UpdateExpression(Expression predicateExpression)
+    {
+        PredicateExpression = predicateExpression;
+        OnChange(predicateExpression);
+    }
+
+    private void AddPredicate(ExpressionType binaryExpressionType)
+    {
+        var memberAccess = Expression.MakeMemberAccess(ParameterExpression, ParameterExpression.Type.GetProperties().First());
+
+        var addedExpressionOperator = RelationalOperators
+            .GetOperators(memberAccess.Type)
+            .OfType<BinaryOperator>()
+            .First();
+
+        var addedExpressionConstant = Expression.Constant(memberAccess.Type.GetDefaultValue(), memberAccess.Type);
+        var addedExpression = Expression.MakeBinary(addedExpressionOperator.ExpressionType, memberAccess, addedExpressionConstant);
+
+        var newLogicalExpression = Expression.MakeBinary(
+            binaryExpressionType,
+            PredicateExpression.Copy(),
+            addedExpression);
+
+        OnChange(newLogicalExpression);
+    }
+
+    private void RemovePredicate()
+    {
+        OnRemove();
+    }
+}

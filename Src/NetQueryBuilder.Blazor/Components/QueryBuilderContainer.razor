@@ -1,0 +1,116 @@
+﻿@using NetQueryBuilder.Services
+@inject IQueryServiceFactory QueryServiceFactory
+
+<MudToolBar Gutters="false" Class="mb-4">
+    <MudStack Row Spacing="3">
+        <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="NewQuery">New Query</MudButton>
+        <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="@OpenDialog">Load Query</MudButton>
+    </MudStack>
+</MudToolBar>
+
+<MudDialog @bind-Visible="_showLoadQueryDialog" Options="_loadQueryDialogOptions">
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            Load Query
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudSelect T="string" @bind-Value="_selectedQuery" Label="Select Query">
+            @foreach (var query in _queries)
+            {
+                <MudSelectItem Value="@query">@query</MudSelectItem>
+            }
+        </MudSelect>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="px-10" OnClick="@LoadQuery" Disabled="@(string.IsNullOrWhiteSpace(_selectedQuery))">Ok</MudButton>
+    </DialogActions>
+</MudDialog>
+
+<MudStack Spacing="5"> 
+    <MudStack Spacing="10">
+        <MudStack Spacing="2">
+            <MudItem xs="12">
+                <MudText Typo="Typo.h5">FROM</MudText>
+                <MudSelect T="Type" Label="Entity" ValueChanged="OnEntitySelect">
+                    @foreach (var entity in _entities)
+                    {
+                        <MudSelectItem Value="@entity">@entity.Name</MudSelectItem>
+                    }
+                </MudSelect>
+            </MudItem>
+        </MudStack>
+        <div @key="_queryBuilderKey">
+            @CreateQueryBuilder()
+        </div>
+    </MudStack>
+</MudStack>
+
+@code {
+    Type SelectedEntityType;
+
+    private int _queryBuilderKey = 0; // Unique key to force re-render
+    private string _selectedQuery;
+    private IReadOnlyList<Type> _entities = Array.Empty<Type>();
+    private IEnumerable<string> _queries = new[] 
+    { 
+        "person => ((person.PersonId == \"1\") OrElse (person.PersonId == \"2\"))", 
+        "person => person.LastName == \"Jones\"",
+        "person => EF.Functions.Like(person.FirstName, \"%Alice%\")"
+    };
+    private DialogOptions _loadQueryDialogOptions = new DialogOptions { CloseButton = true };
+    private bool _showLoadQueryDialog = false;
+
+    RenderFragment CreateQueryBuilder() => builder =>
+    {
+        builder.OpenComponent(0, typeof(QueryBuilder<>).MakeGenericType(SelectedEntityType));
+        builder.AddAttribute(1, "Expression", Expression);
+        builder.CloseComponent();
+    };
+
+    private string Expression { get; set; } = string.Empty;
+
+    private IQueryBuilderState _state = new None();
+    protected override async Task OnInitializedAsync()
+    {
+        _entities = (await QueryServiceFactory.GetEntities()).ToList();
+
+        NewQuery();
+
+        await base.OnInitializedAsync();
+    }
+
+    public void OnEntitySelect(Type value)
+    {
+        Expression = string.Empty;
+        SelectEntity(value);
+    }
+
+    private void SelectEntity(Type entityType)
+    {
+        SelectedEntityType = entityType;
+        StateHasChanged();
+    }
+
+    private void OpenDialog()
+    {
+        _showLoadQueryDialog = true;
+    }
+
+    public void LoadQuery()
+    {
+        // TODO: move entity type selection to dialog
+        // string entityType = nameof(Person);
+        // Expression = _selectedQuery;
+        // SelectEntity(typeof(Person));
+        // _showLoadQueryDialog = false;
+        // _queryBuilderKey++;
+    }
+
+    public void NewQuery()
+    {
+        SelectEntity(_entities.FirstOrDefault());
+        Expression = string.Empty;
+        _queryBuilderKey++;
+    }
+}

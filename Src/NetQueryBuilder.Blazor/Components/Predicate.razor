@@ -1,0 +1,56 @@
+﻿@using System.Linq.Expressions
+@switch (PredicateExpression.NodeType)
+{
+    case ExpressionType.AndAlso:
+    case ExpressionType.OrElse:
+        <LogicalPredicate PredicateExpression="@GetBinaryExpression()"
+                          ParameterExpression="@ParameterExpression"
+                          OnChange="@Change">
+        </LogicalPredicate>
+        break;
+    case ExpressionType.Equal:
+    case ExpressionType.NotEqual:
+    case ExpressionType.GreaterThan:
+    case ExpressionType.GreaterThanOrEqual:
+    case ExpressionType.LessThan:
+    case ExpressionType.LessThanOrEqual:
+    case ExpressionType.Call:
+    case ExpressionType.Not when PredicateExpression is UnaryExpression unaryExpression && unaryExpression.Operand is MethodCallExpression:
+        <RelationalPredicate PredicateExpression="PredicateExpression"
+                             ParameterExpression="@ParameterExpression"
+                             OnChange="@Change"
+                             OnRemove="@Remove">
+        </RelationalPredicate>
+        break;
+}
+
+@code {
+
+    [Parameter]
+    public Expression PredicateExpression { get; set; }
+
+    [Parameter]
+    public ParameterExpression ParameterExpression { get; set; }
+
+    [Parameter]
+    public Action<Expression> OnChange { get; set; }
+
+    [Parameter]
+    public Action OnRemove { get; set; }
+
+    private BinaryExpression GetBinaryExpression()
+    {
+        return PredicateExpression as BinaryExpression;
+    }
+
+    private void Change(Expression expression)
+    {
+        OnChange(expression);
+    }
+
+    public void Remove()
+    {
+        OnRemove();
+        StateHasChanged();
+    }
+}
