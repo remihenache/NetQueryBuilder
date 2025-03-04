@@ -20,10 +20,7 @@ public class ReplaceBinaryLeft : ExpressionVisitor, IExpressionVisitor<BinaryExp
 
     protected override Expression VisitBinary(BinaryExpression node)
     {
-        if (_expression == node)
-        {
-            return Expression.MakeBinary(node.NodeType, _newLeft, Visit(node.Right));
-        }
+        if (_expression == node) return Expression.MakeBinary(node.NodeType, _newLeft, Visit(node.Right));
 
         // TODO: Consider using base.VisitBinary(node) instead of Visit(node)
         return Visit(node);

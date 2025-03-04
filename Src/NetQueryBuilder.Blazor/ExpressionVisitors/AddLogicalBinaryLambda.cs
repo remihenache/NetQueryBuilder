@@ -1,5 +1,4 @@
 ﻿using System.Linq.Expressions;
-using System.Reflection;
 
 namespace NetQueryBuilder.Blazor.ExpressionVisitors;
 
@@ -8,8 +7,8 @@ namespace NetQueryBuilder.Blazor.ExpressionVisitors;
 // Unsure if this expression should be constrainted to a predicate or more open ended
 public class AddLogicalBinaryLambda : ExpressionVisitor, IExpressionVisitor<Expression>
 {
-    private readonly Expression _originalExpression;
     private readonly ExpressionType _binaryExpressionType;
+    private readonly Expression _originalExpression;
 
     public AddLogicalBinaryLambda(Expression originalExpression, ExpressionType binaryExpressionType = ExpressionType.AndAlso)
     {
@@ -24,14 +23,14 @@ public class AddLogicalBinaryLambda : ExpressionVisitor, IExpressionVisitor<Expr
 
     protected override Expression VisitLambda<T>(Expression<T> node)
     {
-        PropertyInfo property = typeof(T).GetProperty(typeof(T).GetProperties().First().Name);
+        var property = typeof(T).GetProperty(typeof(T).GetProperties().First().Name);
         Console.WriteLine("new constant prop: " + property.Name);
-        Expression parameter = Visit(node.Parameters[0]);
-        MemberExpression memberAccess = Expression.MakeMemberAccess(parameter, property);
+        var parameter = Visit(node.Parameters[0]);
+        var memberAccess = Expression.MakeMemberAccess(parameter, property);
 
         var newLeft = Expression.MakeBinary(ExpressionType.Equal, memberAccess, Expression.Constant(string.Empty));
 
-        Expression newRight = Visit(node.Body);
+        var newRight = Visit(node.Body);
 
         var newBody = Expression.MakeBinary(_binaryExpressionType, newLeft, newRight);
 

@@ -7,14 +7,15 @@ namespace NetQueryBuilder.Services;
 
 public class QueryBuilderService<TEntity>
 {
-    private readonly DefaultDynamicLinqCustomTypeProvider _customTypeProvider;    
+    private readonly DefaultDynamicLinqCustomTypeProvider _customTypeProvider;
+
     public QueryBuilderService(DefaultDynamicLinqCustomTypeProvider customTypeProvider)
     {
         _customTypeProvider = customTypeProvider;
     }
 
-    public LambdaExpression Lambda { get; set; }
-    public ParameterExpression Parameter { get; set; }
+    public LambdaExpression? Lambda { get; set; }
+    public ParameterExpression? Parameter { get; set; }
 
     public void LoadEntity()
     {

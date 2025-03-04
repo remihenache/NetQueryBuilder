@@ -1,3 +1,5 @@
 ﻿namespace NetQueryBuilder.Operators;
 
-public class BinaryOperator : ExpressionOperator { }
+public class BinaryOperator : ExpressionOperator
+{
+}

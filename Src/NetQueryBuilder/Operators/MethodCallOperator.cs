@@ -5,19 +5,20 @@ namespace NetQueryBuilder.Operators;
 
 public class MethodCallOperator : ExpressionOperator
 {
-    public override ExpressionType ExpressionType => ExpressionType.Call;
-    public MethodInfo MethodInfo { get; set; }
-    public bool IsNegated { get; set; }
-
     public MethodCallOperator(MethodInfo methodInfo, bool isNegated = false)
     {
         MethodInfo = methodInfo;
         IsNegated = isNegated;
     }
 
-    public override bool Equals(object obj)
+    public override ExpressionType ExpressionType => ExpressionType.Call;
+    public MethodInfo MethodInfo { get;  }
+    public bool IsNegated { get; }
+
+    public override bool Equals(object? obj)
     {
-        return obj is MethodCallOperator op
+        return obj is not null 
+               && obj is MethodCallOperator op
                && base.Equals(obj)
                && EqualityComparer<MethodInfo>.Default.Equals(MethodInfo, op.MethodInfo)
                && IsNegated == op.IsNegated;

@@ -26,17 +26,13 @@
 
 @code {
 
-    [Parameter]
-    public Expression PredicateExpression { get; set; }
+    [Parameter] public Expression PredicateExpression { get; set; }
 
-    [Parameter]
-    public ParameterExpression ParameterExpression { get; set; }
+    [Parameter] public ParameterExpression ParameterExpression { get; set; }
 
-    [Parameter]
-    public Action<Expression> OnChange { get; set; }
+    [Parameter] public Action<Expression> OnChange { get; set; }
 
-    [Parameter]
-    public Action OnRemove { get; set; }
+    [Parameter] public Action OnRemove { get; set; }
 
     private BinaryExpression GetBinaryExpression()
     {
@@ -50,7 +46,9 @@
 
     public void Remove()
     {
-        OnRemove();
+        if(OnRemove != null)
+            OnRemove();
         StateHasChanged();
     }
+
 }

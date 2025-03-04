@@ -13,8 +13,8 @@ public static class QueryBuilderServicesExtensions
     {
         services.AddTransient(typeof(QueryBuilderService<>));
         services.AddSingleton<PredicateFactory>();
-        
-        services.AddTransient<DefaultDynamicLinqCustomTypeProvider>(_ => new CustomEfTypeProvider(new ParsingConfig()
+
+        services.AddTransient<DefaultDynamicLinqCustomTypeProvider>(_ => new CustomEfTypeProvider(new ParsingConfig
         {
             RenameParameterExpression = true
         }, true));
@@ -31,6 +31,7 @@ public static class QueryBuilderServicesExtensions
             var queryServiceType = typeof(EFQueryService<,>).MakeGenericType(entityType, dbContextType);
             services.AddTransient(queryServiceType);
         }
+
         return services;
     }
 }

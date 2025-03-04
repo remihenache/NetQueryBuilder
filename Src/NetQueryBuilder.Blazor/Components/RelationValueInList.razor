@@ -1,14 +1,13 @@
 ﻿@using System.Linq.Expressions
-@using System.Collections.Generic;
 @typeparam T
 
 <MudStack>
     <MudStack>
-        <MudChip T="T" OnClick="@OpenDialog" Size="Size.Small" Text="Add value" Icon="@Icons.Material.Filled.Add" />
+        <MudChip T="T" OnClick="@OpenDialog" Size="Size.Small" Text="Add value" Icon="@Icons.Material.Filled.Add"/>
         <MudChipSet T="T" Size="Size.Small">
-            @foreach (var item in ((IEnumerable<T>)((ConstantExpression)MethodCallExpression.Arguments[0]).Value))
+            @foreach (var item in (IEnumerable<T>)((ConstantExpression)MethodCallExpression.Arguments[0]).Value)
             {
-                <MudChip T="T" Color="Color.Default" Variant="Variant.Text" OnClose="@RemoveListItem" Value="@item" />
+                <MudChip T="T" Color="Color.Default" Variant="Variant.Text" OnClose="@RemoveListItem" Value="@item"/>
             }
         </MudChipSet>
     </MudStack>
@@ -21,7 +20,7 @@
         </MudText>
     </TitleContent>
     <DialogContent>
-        <MudTextField Label="Value" T="T" @bind-Value="_listItemInputValue" />
+        <MudTextField Label="Value" T="T" @bind-Value="_listItemInputValue"/>
     </DialogContent>
     <DialogActions>
         <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="px-10" OnClick="@AddListItem">Ok</MudButton>
@@ -29,19 +28,16 @@
 </MudDialog>
 
 @code {
-    [Parameter]
-    public MethodCallExpression MethodCallExpression { get; set; }
+    [Parameter] public MethodCallExpression MethodCallExpression { get; set; }
 
-    [Parameter]
-    public Action<T> OnUpdateValue { get; set; }
+    [Parameter] public Action<T> OnUpdateValue { get; set; }
 
-    [Parameter]
-    public Action<IEnumerable<T>> OnUpdateValues { get; set; }
+    [Parameter] public Action<IEnumerable<T>> OnUpdateValues { get; set; }
 
     private T _listItemInputValue;
     private IEnumerable<T> _items;
     private bool _showListItemDialog;
-    private DialogOptions _listItemDialogOptions = new DialogOptions { CloseButton = true };
+    private DialogOptions _listItemDialogOptions = new() { CloseButton = true };
 
     protected override void OnParametersSet()
     {
@@ -50,7 +46,7 @@
     private void OpenDialog()
     {
         _showListItemDialog = true;
-        _items = (IEnumerable<T>)((ConstantExpression)(MethodCallExpression.Arguments[0])).Value;
+        _items = (IEnumerable<T>)((ConstantExpression)MethodCallExpression.Arguments[0]).Value;
     }
 
     private void AddListItem()
@@ -58,7 +54,7 @@
         var items = _items.ToList();
         items.Add(_listItemInputValue);
         _showListItemDialog = false;
-        _listItemInputValue = default(T);
+        _listItemInputValue = default;
         UpdateValues(items);
     }
 
@@ -69,7 +65,14 @@
         UpdateValues(items);
     }
 
-    private void UpdateValue(T value) => OnUpdateValue.Invoke(value);
-    
-    private void UpdateValues(IEnumerable<T> value) => OnUpdateValues.Invoke(value);
+    private void UpdateValue(T value)
+    {
+        OnUpdateValue.Invoke(value);
+    }
+
+    private void UpdateValues(IEnumerable<T> value)
+    {
+        OnUpdateValues.Invoke(value);
+    }
+
 }
