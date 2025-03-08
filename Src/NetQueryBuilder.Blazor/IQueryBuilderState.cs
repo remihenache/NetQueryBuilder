@@ -1,4 +1,6 @@
-﻿namespace NetQueryBuilder.Blazor;
+﻿using System.Linq.Expressions;
+
+namespace NetQueryBuilder.Blazor;
 
 public interface IQueryBuilderState
 {

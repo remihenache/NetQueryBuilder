@@ -2,6 +2,7 @@
 @using System.Linq.Expressions
 @using System.Reflection
 @using NetQueryBuilder.Blazor.ExpressionVisitors.Extensions
+@using NetQueryBuilder.Conditions
 @using NetQueryBuilder.Extensions
 @using NetQueryBuilder.Services
 @typeparam TEntity where TEntity : class
@@ -24,10 +25,25 @@
 
     <div>
         <MudText Typo="Typo.h5" GutterBottom="true">WHERE</MudText>
-        <LambdaComponent OnChanged="@OnChanged"
-                         Lambda="@QueryBuilderService.Lambda"
+        <BlockComponent OnChange="@OnChanged"
+                        Condition="@Condition"
                          Parameter="@QueryBuilderService.Parameter">
-        </LambdaComponent>
+        </BlockComponent>
+        <MudItem xs="4" lg="4">
+            <MudCard>
+                <MudCardHeader>
+                    <CardHeaderContent>
+                        <MudText Typo="Typo.h6">Lambda Expression</MudText>
+                    </CardHeaderContent>
+                    <CardHeaderActions>
+                        <MudIconButton Icon="@Icons.Material.Filled.CopyAll" Color="Color.Default"/>
+                    </CardHeaderActions>
+                </MudCardHeader>
+                <MudCardContent>
+                    <code>@QueryBuilderService.Lambda.ToString()</code>
+                </MudCardContent>
+            </MudCard>
+        </MudItem>
     </div>
 
     <div>
@@ -58,11 +74,23 @@
     private Expression<Func<TEntity, bool>> Predicate => (Expression<Func<TEntity, bool>>)QueryBuilderService.Lambda;
     private IEnumerable<string> propertyPaths = Enumerable.Empty<string>();
     private IEnumerable<string> SelectedPropertyPaths = new List<string>();
-
+private BlockCondition Condition { get; set; }
     protected override Task OnInitializedAsync()
     {
         propertyPaths = PropertyInspector.GetAllPropertyPaths(typeof(TEntity)).ToList();
         SelectedPropertyPaths = propertyPaths.ToList();
+        if(QueryBuilderService.Lambda.Body is BinaryExpression binaryExpression)
+        {
+            
+            Condition = new BlockCondition(new []
+            {
+                new LogicalCondition()
+                {
+                    Left = binaryExpression.Left,
+                    Right = binaryExpression.Right,
+                    ExpressionType = binaryExpression.NodeType
+                }
+            }, ExpressionType.And);}
         return base.OnInitializedAsync();
     }
 

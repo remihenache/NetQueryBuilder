@@ -1,0 +1,99 @@
+﻿@using System.Linq.Expressions
+@using NetQueryBuilder.Conditions
+@using NetQueryBuilder.Extensions
+
+<MudPaper Class="pa-2" Style=@("margin-left:"+(IndentationLevel * 20) + "px;")>
+    <MudStack Spacing="3">
+        <!-- Affichage de chaque “sous-condition” appartenant au même niveau -->
+        @foreach (var childCondition in Condition.Conditions)
+        {
+            <div>
+                @if (childCondition is BlockCondition block)
+                {
+                    <!-- Affiche un sous-bloc récursivement -->
+                    <BlockComponent Condition="block"
+                                    IndentationLevel="@(IndentationLevel + 1)"
+                                    Parameter="@Parameter" OnChange="@OnChange"/>
+                }
+                else if (childCondition is LogicalCondition condition)
+                {
+                    <MudCheckBox T="bool" Label="Group"
+                                 ValueChanged="@(e => Select(e, childCondition))" />
+                    <!-- Affiche un composant “lambda” ou un équivalent pour la condition simple -->
+                    <LambdaComponent Condition="@condition" Parameter="@Parameter" OnChanged="@OnChange"/>
+                    <MudIconButton Variant="Variant.Filled" Icon="@Icons.Material.Filled.Delete" OnClick="e => RemovePredicate(condition)"></MudIconButton>
+                }
+            </div>
+        }
+        <button @onclick="() => GroupConditions()">Créer un bloc</button>
+
+        <MudItem xs="12" sm="4">
+            <div>
+                <MudStack Row Spacing="2">
+                    <MudButton Variant="Variant.Filled" OnClick="@(() => AddPredicate(ExpressionType.AndAlso))">And</MudButton>
+                    <MudButton Variant="Variant.Filled" OnClick="@(() => AddPredicate(ExpressionType.OrElse))">Or</MudButton>
+                    <MudIconButton Variant="Variant.Filled" Icon="@Icons.Material.Filled.Group" OnClick="GroupConditions"></MudIconButton>
+                </MudStack>
+            </div>
+        </MudItem>
+    </MudStack>
+</MudPaper>
+@code {
+    [Parameter]
+    public BlockCondition Condition { get; set; }
+
+    [Parameter]
+    public int IndentationLevel { get; set; } = 0;
+
+    [Parameter]
+    public ParameterExpression Parameter { get; set; }
+
+    [Parameter]
+    public Action<Expression> OnChange { get; set; }
+
+    public List<ICondition> SelectedConditions { get; set; } = new List<ICondition>();
+    private void GroupConditions()
+    {
+        Condition.Group(SelectedConditions);
+        SelectedConditions.Clear();
+        OnChange(Condition.Compile());
+    }
+
+    private void Select(bool e, ICondition childCondition)
+    {
+        if (e)
+            SelectedConditions.Add(childCondition);
+        else
+            SelectedConditions.Remove(childCondition);
+    }
+
+    
+    private void AddPredicate(ExpressionType binaryExpressionType)
+    {
+        Condition.CreateNew();
+        // var memberAccess = Expression.MakeMemberAccess(ParameterExpression, ParameterExpression.Type.GetProperties().First());
+        //
+        // var addedExpressionOperator = RelationalOperators
+        //     .GetOperators(memberAccess.Type)
+        //     .OfType<BinaryOperator>()
+        //     .First();
+        //
+        // var addedExpressionConstant = Expression.Constant(memberAccess.Type.GetDefaultValue(), memberAccess.Type);
+        // var addedExpression = Expression.MakeBinary(addedExpressionOperator.ExpressionType, memberAccess, addedExpressionConstant);
+        //
+        // var newLogicalExpression = Expression.MakeBinary(
+        //     binaryExpressionType,
+        //     PredicateExpression.Copy(),
+        //     addedExpression);
+
+        OnChange(Condition.Compile());
+    }
+
+    private void RemovePredicate(LogicalCondition condition)
+    {
+        Condition.Remove(condition);
+    }
+
+    
+    
+}

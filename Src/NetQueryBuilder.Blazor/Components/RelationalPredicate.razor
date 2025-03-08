@@ -37,15 +37,6 @@
                                          OnValueChanged="OnValueChanged">
                         </RelationalValue>
                     </MudItem>
-                    <MudItem xs="12" sm="4">
-                        <div>
-                            <MudStack Row Spacing="2">
-                                <MudButton Variant="Variant.Filled" OnClick="@(() => AddPredicate(ExpressionType.AndAlso))">And</MudButton>
-                                <MudButton Variant="Variant.Filled" OnClick="@(() => AddPredicate(ExpressionType.OrElse))">Or</MudButton>
-                                <MudIconButton Variant="Variant.Filled" Icon="@Icons.Material.Filled.Delete" OnClick="RemovePredicate"></MudIconButton>
-                            </MudStack>
-                        </div>
-                    </MudItem>
                 </MudGrid>
             </MudStack>
         </ChildContent>
@@ -96,31 +87,6 @@
     {
         PredicateExpression = predicateExpression;
         OnChange(predicateExpression);
-    }
-
-    private void AddPredicate(ExpressionType binaryExpressionType)
-    {
-        var memberAccess = Expression.MakeMemberAccess(ParameterExpression, ParameterExpression.Type.GetProperties().First());
-
-        var addedExpressionOperator = RelationalOperators
-            .GetOperators(memberAccess.Type)
-            .OfType<BinaryOperator>()
-            .First();
-
-        var addedExpressionConstant = Expression.Constant(memberAccess.Type.GetDefaultValue(), memberAccess.Type);
-        var addedExpression = Expression.MakeBinary(addedExpressionOperator.ExpressionType, memberAccess, addedExpressionConstant);
-
-        var newLogicalExpression = Expression.MakeBinary(
-            binaryExpressionType,
-            PredicateExpression.Copy(),
-            addedExpression);
-
-        OnChange(newLogicalExpression);
-    }
-
-    private void RemovePredicate()
-    {
-        OnRemove();
     }
 
 }
